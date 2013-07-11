@@ -70,6 +70,7 @@ var write = function(checksfile) {
     }
     var outJson = JSON.stringify(out, null, 4);
     console.log(outJson);
+    fs.writeFileSync("output.JSON", outJson);
 }
 
 var clone = function(fn) {
