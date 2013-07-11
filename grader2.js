@@ -51,29 +51,26 @@ var checkHtmlFile = function(htmlfile, url, checksfile) {
             if (data instanceof Error) {
                 console.log('error');
             } else {
-                var checks = loadChecks(checksfile).sort();
                 var $ = cheerio.load(data);
-                var out = {};
-                for(var ii in checks) {
-                    var present = $(checks[ii]).length > 0;
-                    out[checks[ii]] = present;
-                }
-                var outJson = JSON.stringify(out, null, 4);
-                console.log(outJson);
+                write(checksfile);
             }
         });
     } else {
         $ = cheerioHtmlFile(htmlfile);
-        var checks = loadChecks(checksfile).sort();
-        var out = {};
-        for(var ii in checks) {
-            var present = $(checks[ii]).length > 0;
-            out[checks[ii]] = present;
-        }
-        var outJson = JSON.stringify(out, null, 4);
-        console.log(outJson);
+        write(checksfile);      
     }
 };
+
+var write = function(checksfile) {
+    var checks = loadChecks(checksfile).sort();
+    var out = {};
+    for(var ii in checks) {
+        var present = $(checks[ii]).length > 0;
+        out[checks[ii]] = present;
+    }
+    var outJson = JSON.stringify(out, null, 4);
+    console.log(outJson);
+}
 
 var clone = function(fn) {
     // Workaround for commander.js issue.
@@ -88,9 +85,6 @@ if(require.main == module) {
         .option('-u, --url <html_file>', 'Url')
         .parse(process.argv);
     var checkJson = checkHtmlFile(program.file, program.url, program.checks);
-    // need to remove this since it is sync and will executed before the above asyc is complete!
-    //var outJson = JSON.stringify(checkJson, null, 4);
-    //console.log(outJson);
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
